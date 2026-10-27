@@ -1,0 +1,14 @@
+# Notas internas del proyecto (no se publican)
+AGENTS.md
+
+# Dependencias
+node_modules/
+
+# Secretos y variables de entorno
+.env
+.env.local
+
+# Builds y temporales
+dist/
+build/
+*.log

@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './config/db.js';
 import productRoutes from './routes/product.routes.js';
 
+
 const app = express();
 
 app.use(express.json());
@@ -29,6 +30,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
+
 
 app.listen(3000, () => {
   console.log('Servidor escuchando en http://localhost:3000');

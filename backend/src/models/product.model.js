@@ -40,19 +40,32 @@ export async function countProducts() {
   return rows[0].total;
 }
 
-
 // Crear un producto CREATE
 export async function createProduct(productData) {
-  const { name, description, price, stock, image_url, category_id, brand_id } = productData;
+  const { name, description, price, stock, image_url, category_id, brand_id } =
+    productData;
   const { rows } = await query(
     `INSERT INTO products (name, description, price, stock, image_url, category_id, brand_id)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
-    [name, description, price, stock, image_url, category_id, brand_id]
+    [name, description, price, stock, image_url, category_id, brand_id],
   );
   return mapProduct(rows[0]);
 }
 
+// Actualizar un producto por ID
+export async function updateProduct(id, productData) {
+  const { name, description, price, stock, image_url, category_id, brand_id } =
+    productData;
+  const { rows } = await query(
+    `UPDATE products 
+     SET name = $1, description = $2, price = $3, stock = $4, image_url = $5, category_id = $6, brand_id = $7
+     WHERE id = $8
+     RETURNING *`,
+    [name, description, price, stock, image_url, category_id, brand_id, id],
+  );
+  return rows[0] ? mapProduct(rows[0]) : null;
+}
 
 //Eliminar un producto por ID
 export async function deleteProduct(id) {

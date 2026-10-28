@@ -1,4 +1,10 @@
-import { findAllProducts, findPaginatedProducts, countProducts, createProduct, deleteProduct } from "../models/product.model.js";
+import { findAllProducts, 
+  findPaginatedProducts,
+   countProducts, 
+   createProduct,
+   updateProduct,
+   deleteProduct } from "../models/product.model.js";
+
 
 // GET /api/products
 export async function listAllProducts(req, res) {
@@ -40,6 +46,22 @@ export async function createNewProduct(req, res) {
   try {
     const newProduct = await createProduct(req.body);
     res.status(201).json({ message: "Producto creado exitosamente", data: newProduct });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+// PUT /api/products/:id
+export async function updateExistingProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const updated = await updateProduct(id, req.body);
+    
+    if (!updated) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    res.json({ message: "Producto actualizado exitosamente", data: updated });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

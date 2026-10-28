@@ -52,3 +52,10 @@ export async function createProduct(productData) {
   );
   return mapProduct(rows[0]);
 }
+
+
+//Eliminar un producto por ID
+export async function deleteProduct(id) {
+  const { rowCount } = await query(`DELETE FROM products WHERE id = $1`, [id]);
+  return rowCount > 0; // Retorna true si borró algo, false si no existía
+}

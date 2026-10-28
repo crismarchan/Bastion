@@ -1,4 +1,4 @@
-import { findAllProducts, findPaginatedProducts, countProducts, createProduct } from "../models/product.model.js";
+import { findAllProducts, findPaginatedProducts, countProducts, createProduct, deleteProduct } from "../models/product.model.js";
 
 // GET /api/products
 export async function listAllProducts(req, res) {
@@ -45,3 +45,19 @@ export async function createNewProduct(req, res) {
   }
 }
 
+
+// DELETE /api/products/:id
+export async function removeProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const deleted = await deleteProduct(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    res.json({ message: "Producto eliminado exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}

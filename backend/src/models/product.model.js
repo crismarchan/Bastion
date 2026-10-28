@@ -39,3 +39,16 @@ export async function countProducts() {
   const { rows } = await query(`SELECT COUNT(*)::int AS total FROM products`);
   return rows[0].total;
 }
+
+
+// Crear un producto CREATE
+export async function createProduct(productData) {
+  const { name, description, price, stock, image_url, category_id, brand_id } = productData;
+  const { rows } = await query(
+    `INSERT INTO products (name, description, price, stock, image_url, category_id, brand_id)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING *`,
+    [name, description, price, stock, image_url, category_id, brand_id]
+  );
+  return mapProduct(rows[0]);
+}

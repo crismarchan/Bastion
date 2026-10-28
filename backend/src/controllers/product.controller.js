@@ -1,4 +1,4 @@
-import { findAllProducts, findPaginatedProducts, countProducts } from "../models/product.model.js";
+import { findAllProducts, findPaginatedProducts, countProducts, createProduct } from "../models/product.model.js";
 
 // GET /api/products
 export async function listAllProducts(req, res) {
@@ -30,6 +30,16 @@ export async function listPaginatedProducts(req, res) {
         totalPages: Math.ceil(total / limit),
       },
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+// POST /api/products
+export async function createNewProduct(req, res) {
+  try {
+    const newProduct = await createProduct(req.body);
+    res.status(201).json({ message: "Producto creado exitosamente", data: newProduct });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

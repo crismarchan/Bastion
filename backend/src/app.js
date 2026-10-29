@@ -1,11 +1,14 @@
 import express from 'express';
 import { query } from './config/db.js';
 import productRoutes from './routes/product.routes.js';
+import cors from 'cors'
 
 
 const app = express();
 
 app.use(express.json());
+
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.send('Bastion API viva');

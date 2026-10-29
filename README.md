@@ -141,6 +141,12 @@ Para comprobar una imagen, inicia el backend y abre su URL directamente en el na
 
 El frontend toma la URL base de `VITE_API_URL`. Para compartir el catálogo, incluye los archivos de imágenes en Git y proporciona una URL de backend accesible desde el equipo del evaluador; `localhost` solo funciona en la misma computadora donde corre Express.
 
+## Qué puede probarse actualmente en el frontend
+
+El frontend muestra el Hero y el catálogo público. Por ahora consume únicamente `GET /api/products/paginated`, solicita **9 productos por página** y permite cambiar de página con los controles de paginación. Las tarjetas muestran la información del producto y cargan sus imágenes desde el backend; cuando un producto no tiene imagen, aparece un reemplazo.
+
+El frontend todavía no ofrece login, filtros por categoría ni operaciones para crear, editar o eliminar productos. Aunque esas rutas de escritura existen en el backend, aún no están conectadas a una interfaz de administración. Para comprobar la integración completa, inicia ambos servidores, abre la URL que informa Vite y prueba la paginación; la ruta de API equivalente es `http://localhost:3000/api/products/paginated?limit=9&offset=0`.
+
 ## Alcance y seguridad de la demo
 
 El catálogo y las imágenes son públicos. Las escrituras de productos usan temporalmente la cabecera `x-user-role: admin`, que cualquiera puede falsificar; no es autenticación real y no debe usarse para proteger datos. El login no está implementado todavía.

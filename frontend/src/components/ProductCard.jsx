@@ -10,8 +10,6 @@ function ProductCard({ product }) {
   const [failedImageUrl, setFailedImageUrl] = useState(null)
   const showPlaceholder = !product.image_url || failedImageUrl === product.image_url
   const imageUrl = getImageUrl(product.image_url)
-  const stock = Number(product.stock)
-
 
   return (
     <article className="overflow-hidden rounded-xl border border-mist bg-white shadow-sm transition hover:shadow-md">
@@ -35,10 +33,6 @@ function ProductCard({ product }) {
         <h2 className="font-display text-lg font-semibold">{product.name}</h2>
         <p className="line-clamp-2 text-sm text-ink-muted">{product.description || 'Sin descripción disponible.'}</p>
         <p className="font-semibold">{currencyFormatter.format(Number(product.price))}</p>
-        <div className="flex items-center justify-between gap-2">
-      
-
-        </div>
       </div>
     </article>
   )

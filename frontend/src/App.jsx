@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import './App.css'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import Hero from './components/Hero.jsx'

@@ -1,2 +1,20 @@
 @import "tailwindcss";
 
+@theme {
+  --color-navy: #102E40;
+  --color-navy-soft: #1D4560;
+  --color-brass: #C9A24B;
+  --color-brass-dark: #8A6A1F;
+  --color-cream: #F5F3EE;
+  --color-mist: #C7D2D9;
+  --color-ink-muted: #4A6272;
+  --color-danger: #B3261E;
+  --color-success: #1F7A5A;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  @apply bg-cream font-sans text-navy antialiased;
+}

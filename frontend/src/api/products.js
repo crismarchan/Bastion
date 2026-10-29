@@ -1,4 +1,6 @@
-const PRODUCTS_URL = 'http://localhost:3000/api/products/paginated'
+import { API_BASE_URL } from './config.js'
+
+const PRODUCTS_URL = `${API_BASE_URL}/api/products/paginated`
 
 export async function getPaginatedProducts({ limit, offset, signal }) {
   const response = await fetch(

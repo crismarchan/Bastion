@@ -1,4 +1,5 @@
 import express from 'express';
+import { fileURLToPath } from 'node:url';
 import { query } from './config/db.js';
 import productRoutes from './routes/product.routes.js';
 import cors from 'cors'
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors())
+app.use('/images', express.static(fileURLToPath(new URL('../public/images/', import.meta.url))));
 
 app.get('/', (req, res) => {
   res.send('Bastion API viva');

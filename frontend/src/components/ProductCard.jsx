@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getImageUrl } from '../api/config.js'
 
 const currencyFormatter = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -8,9 +9,9 @@ const currencyFormatter = new Intl.NumberFormat('es-MX', {
 function ProductCard({ product }) {
   const [failedImageUrl, setFailedImageUrl] = useState(null)
   const showPlaceholder = !product.image_url || failedImageUrl === product.image_url
+  const imageUrl = getImageUrl(product.image_url)
   const stock = Number(product.stock)
-  const stockLabel = stock === 0 ? 'Agotado' : stock <= 5 ? 'Últimas piezas' : 'Disponible'
-  const stockColor = stock === 0 ? 'text-danger' : stock <= 5 ? 'text-brass-dark' : 'text-success'
+
 
   return (
     <article className="overflow-hidden rounded-xl border border-mist bg-white shadow-sm transition hover:shadow-md">
@@ -21,7 +22,7 @@ function ProductCard({ product }) {
           </div>
         ) : (
           <img
-            src={product.image_url}
+            src={imageUrl}
             alt={product.name}
             loading="lazy"
             className="h-full w-full object-cover"
@@ -35,8 +36,8 @@ function ProductCard({ product }) {
         <p className="line-clamp-2 text-sm text-ink-muted">{product.description || 'Sin descripción disponible.'}</p>
         <p className="font-semibold">{currencyFormatter.format(Number(product.price))}</p>
         <div className="flex items-center justify-between gap-2">
-          <span className="rounded-full bg-mist/50 px-2 py-1 text-xs text-navy">{product.category_name}</span>
-          <span className={`text-xs font-semibold ${stockColor}`}>{stockLabel}</span>
+      
+
         </div>
       </div>
     </article>

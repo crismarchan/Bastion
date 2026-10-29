@@ -14,6 +14,7 @@ El código está dividido por responsabilidades:
 - `backend/src/models/`: ejecuta las consultas SQL para productos.
 - `backend/src/middlewares/`: contiene el middleware de comprobación de rol usado en las escrituras.
 - `backend/src/config/db.js`: configura el pool de conexiones de PostgreSQL con `DATABASE_URL`.
+- `backend/public/images/`: almacena las imágenes de productos que Express publica bajo `/images`.
 - `backend/db/schema.sql`: define las tablas y relaciones.
 - `backend/db/seed.sql`: contiene datos iniciales de categorías, marcas y productos.
 
@@ -104,3 +105,13 @@ GET http://localhost:3000/api/products/paginated?limit=10&offset=0
 ```
 
 `localhost` se refiere a la misma laptop donde corre Node.js. Para que otra computadora haga pruebas, el backend debe ejecutarse allí o configurarse para aceptar conexiones de red y la URL debe apuntar a esa computadora, no a `localhost` en el equipo remoto.
+
+## Imágenes de productos
+
+El backend publica los archivos de `backend/public/images/` bajo la ruta `/images`. Guarda allí las imágenes de producto con nombres simples, por ejemplo `camisa-oxford-azul.webp`. Para evitar descargas pesadas, procura usar WebP, un ancho aproximado de 800 px y un peso menor a 150 KB por imagen.
+
+La base de datos guarda únicamente la ruta, no el archivo. En `products.image_url` registra `/images/camisa-oxford-azul.webp`. Express la servirá en `http://localhost:3000/images/camisa-oxford-azul.webp`, y la tarjeta del frontend construye esa URL usando la dirección base de la API. Si no hay ruta o el archivo no carga, la tarjeta muestra un reemplazo con la inicial del producto.
+
+Para comprobar una imagen, inicia el backend y abre su URL directamente en el navegador, por ejemplo `http://localhost:3000/images/camisa-oxford-azul.webp`. Si no carga, revisa que el nombre y la extensión coincidan con el archivo en la carpeta.
+
+El frontend toma la URL base de `VITE_API_URL`. En la carpeta `frontend`, copia `.env.example` a `.env` para desarrollo local. Si el backend está en otra computadora o servidor, cambia esa variable por su URL accesible desde el navegador; `localhost` solo funciona en el mismo equipo que ejecuta el backend.

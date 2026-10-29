@@ -1,6 +1,6 @@
 # Bastion
 
-Bastion es un catálogo de ropa para caballero, accesorios y perfumes. El proyecto está organizado como una tienda de catálogo con administración de productos; actualmente, el trabajo implementado en este repositorio corresponde al backend.
+Bastion es un catálogo de ropa para caballero, accesorios y perfumes. El repositorio contiene una API Express, un frontend React y un seed para preparar una base PostgreSQL nueva con productos e imágenes.
 
 ## Backend actual
 
@@ -36,27 +36,52 @@ Las rutas para crear, editar y borrar productos usan `x-user-role: admin` como c
 - Git para clonar el repositorio.
 - Postman para probar las rutas manualmente.
 
-## Instalación en Windows
+## Preparar una base de datos nueva
 
-Abre PowerShell en el directorio donde quieras guardar el repositorio:
+La base de datos se aloja en Supabase. Para tener una copia propia del catálogo, crea un proyecto Supabase y abre **SQL Editor**. Ejecuta los archivos en este orden:
+
+1. `backend/db/schema.sql` crea las tablas.
+2. `backend/db/seed.sql` inserta las categorías, marcas y 24 productos con IDs estables y sus rutas de imagen.
+
+Ejecuta el seed **una sola vez y únicamente en una base vacía** después del esquema. No es idempotente: volverlo a ejecutar duplica categorías y marcas y puede fallar por sus restricciones `UNIQUE`. La tabla `users` queda vacía; el seed no crea cuentas ni contraseñas.
+
+Los IDs de productos se fijan en el seed para que coincidan con los archivos `backend/public/images/product-<id>.png`. Cinco productos no tienen imagen; su `image_url` queda en `NULL` y el frontend muestra un reemplazo.
+
+## Instalación y configuración local
+
+Requisitos: Node.js LTS, npm, Git y un proyecto Supabase con el esquema y seed ya ejecutados. Desde PowerShell:
 
 ```powershell
 git clone https://github.com/crismarchan/Bastion.git
-cd Bastion\backend
+cd Bastion
+cd backend
 npm ci
+Copy-Item .env.example .env
 ```
 
-`npm ci` instala las dependencias fijadas en `package-lock.json`. La configuración local necesaria para ejecutar el servicio se proporciona por separado y no se incluye en el repositorio.
+Abre `backend/.env` y reemplaza el valor de ejemplo por la cadena PostgreSQL de **Supabase > Connect**. No compartas ni subas ese archivo: contiene credenciales. Después de iniciar el backend, revisa la conexión en `http://localhost:3000/api/health`.
 
-## Ejecutar el servidor
+### Ejecutar backend y frontend
 
-Desde `Bastion\backend`, inicia el modo de desarrollo:
+Abre una terminal para cada servidor. En la primera:
 
 ```powershell
+cd Bastion\backend
 npm run dev
 ```
 
-El servidor usa actualmente el puerto `3000`. Cuando la terminal muestre `Servidor escuchando en http://localhost:3000`, puedes enviar solicitudes. Para detenerlo, presiona `Ctrl+C` en esa terminal.
+El backend escucha en `http://localhost:3000`. En una segunda terminal:
+
+```powershell
+cd Bastion\frontend
+npm ci
+Copy-Item .env.example .env
+npm run dev
+```
+
+Abre la URL local que Vite muestra en la terminal, normalmente `http://localhost:5173`. El `.env` del frontend puede conservar `VITE_API_URL=http://localhost:3000` para desarrollo local. Si cambias esa variable, reinicia Vite.
+
+Para comprobar la API, visita `http://localhost:3000/api/health` y `http://localhost:3000/api/products/paginated?limit=9&offset=0`. El catálogo debe mostrar hasta nueve productos por página.
 
 
 ## Rutas disponibles
@@ -108,10 +133,14 @@ GET http://localhost:3000/api/products/paginated?limit=10&offset=0
 
 ## Imágenes de productos
 
-El backend publica los archivos de `backend/public/images/` bajo la ruta `/images`. Guarda allí las imágenes de producto con nombres simples, por ejemplo `camisa-oxford-azul.webp`. Para evitar descargas pesadas, procura usar WebP, un ancho aproximado de 800 px y un peso menor a 150 KB por imagen.
+El backend publica los archivos de `backend/public/images/` bajo la ruta `/images`. El seed espera nombres como `product-2.png`; ese archivo se sirve en `http://localhost:3000/images/product-2.png`.
 
-La base de datos guarda únicamente la ruta, no el archivo. En `products.image_url` registra `/images/camisa-oxford-azul.webp`. Express la servirá en `http://localhost:3000/images/camisa-oxford-azul.webp`, y la tarjeta del frontend construye esa URL usando la dirección base de la API. Si no hay ruta o el archivo no carga, la tarjeta muestra un reemplazo con la inicial del producto.
+La base solo guarda la ruta relativa en `products.image_url`, no el archivo. El seed ya asocia las rutas de los productos. Los PNG incluidos en Git suman aproximadamente 25 MB; si se reemplazan por otros formatos o nombres, actualiza tanto los archivos como el seed para que las rutas sigan coincidiendo. Para futuras imágenes, se recomienda WebP, unos 800 px de ancho y menos de 150 KB por archivo. Si no hay ruta o el archivo no carga, la tarjeta muestra un reemplazo.
 
-Para comprobar una imagen, inicia el backend y abre su URL directamente en el navegador, por ejemplo `http://localhost:3000/images/camisa-oxford-azul.webp`. Si no carga, revisa que el nombre y la extensión coincidan con el archivo en la carpeta.
+Para comprobar una imagen, inicia el backend y abre su URL directamente en el navegador, por ejemplo `http://localhost:3000/images/product-2.png`. Si no carga, revisa que el nombre y la extensión coincidan con el archivo en la carpeta.
 
-El frontend toma la URL base de `VITE_API_URL`. En la carpeta `frontend`, copia `.env.example` a `.env` para desarrollo local. Si el backend está en otra computadora o servidor, cambia esa variable por su URL accesible desde el navegador; `localhost` solo funciona en el mismo equipo que ejecuta el backend.
+El frontend toma la URL base de `VITE_API_URL`. Para compartir el catálogo, incluye los archivos de imágenes en Git y proporciona una URL de backend accesible desde el equipo del evaluador; `localhost` solo funciona en la misma computadora donde corre Express.
+
+## Alcance y seguridad de la demo
+
+El catálogo y las imágenes son públicos. Las escrituras de productos usan temporalmente la cabecera `x-user-role: admin`, que cualquiera puede falsificar; no es autenticación real y no debe usarse para proteger datos. El login no está implementado todavía.
